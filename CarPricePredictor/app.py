@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 
 app = Flask(__name__)
-model = pickle.load(open('Lasso_model.pkl', 'rb'))
+model = pickle.load(open('RandomForestRegressor_model.pkl', 'rb'))
 
 @app.route('/')
 def home():

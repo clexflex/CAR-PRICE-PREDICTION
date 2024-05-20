@@ -82,7 +82,7 @@
                 <label class="form-check-label" for="automatic">Automatic</label>
             </div>
         </div>
-        <button type="button" class="btn btn-primary" onclick="predictPrice()">Predict</button>
+        <button type="submit" class="btn btn-primary">Predict</button>
     </form>
 
     <div id="predictionResult" class="container mt-4"></div>
@@ -91,6 +91,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
+        $(document).ready(function() {
+            $('#carForm').on('submit', function(event) {
+                event.preventDefault();
+                predictPrice();
+            });
+        });
+
         function predictPrice() {
             $.ajax({
                 type: 'POST',
@@ -99,10 +106,16 @@
                 success: function(response) {
                     // Convert the response to a number
                     var price = parseFloat(response);
-                    
-                        var displayPrice = Math.abs(price); // Convert negative prices to positive
-                        $('#predictionResult').html('<div class="alert alert-success" role="alert">Predicted Price: ₹' + displayPrice.toFixed(2) + '</div>');
-                      
+
+                    // Ensure the price is positive
+                    var displayPrice = Math.abs(price);
+
+                    // Calculate the price range
+                    var lowerRange = displayPrice - (displayPrice % 100000);
+                    var upperRange = lowerRange + 100000;
+
+                    // Display the price and the price range
+                    $('#predictionResult').html('<div class="alert alert-success" role="alert">Predicted Price: ₹' + displayPrice.toFixed(2) + '<br>Price Range: ₹' + lowerRange.toFixed(2) + ' to ₹' + upperRange.toFixed(2) + '</div>');
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
